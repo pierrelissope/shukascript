@@ -1,0 +1,49 @@
+name: ShukaScript deployment's actions
+env:
+  EXECUTABLES: 'ShukaScript'
+  pwd: "."
+
+on:
+  push:
+    branches-ignore:
+      - 'ga-ignore-*'
+  pull_request:
+    branches-ignore:
+      - 'ga-ignore-*'
+
+jobs:
+
+  check_program_compilation:
+    timeout-minutes: 2
+    runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker:latest
+    steps:
+      - uses: actions/checkout@v3
+      - id: check_program_compilation
+        run:  |
+          IFS=',' read -r -a EXECUTABLES_ARRAY <<< "${{ env.EXECUTABLES }}"
+          for file in "${EXECUTABLES_ARRAY[@]}"; do
+              rm -f "$file"
+          done
+          make
+      - name: Try to Clean
+        run: make clean
+      - name: Check if Executables has been created
+        run: |
+          IFS=',' read -r -a EXECUTABLES_ARRAY <<< "${{ env.EXECUTABLES }}"
+          for file in "${EXECUTABLES_ARRAY[@]}"; do
+              if [ ! -e "$file" ] || [ ! -x "$file" ]; then
+                  exit 1
+              fi
+          done
+
+  run_tests:
+    timeout-minutes: 2
+    runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker:latest
+    needs: check_program_compilation
+    steps:
+      - uses: actions/checkout@v3
+      - name: run_tests
+        run: make tests_run
+
