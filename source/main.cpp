@@ -24,7 +24,7 @@ string open_file(string file_path)
 
 int main(int ac, char **av)
 {
-    string source_code = open_file("./source/main.cpp");
+    string source_code = open_file("./index.shk");
     Lexer *lexer = new Lexer();
     vector<token *> array = lexer->process(source_code);
 
