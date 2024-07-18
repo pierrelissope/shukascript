@@ -22,11 +22,13 @@ vector<token *> Lexer::process(string source_code)
 {
     source_code_it = source_code.begin();
     bool is_identifier = true;
+    bool complete_identifier = true;
     string new_identifier = "";
 
     while (source_code_it != source_code.end()) {
         is_identifier = true;
         if (*source_code_it == ' ' || *source_code_it == '\n' || *source_code_it == '\t') {
+            complete_identifier = false;
             ++source_code_it;
             continue;
         }
@@ -43,11 +45,14 @@ vector<token *> Lexer::process(string source_code)
                 break;
         }
         if (is_identifier) {
-            if (token_array.empty() || token_array.back()->type != IDENTIFIER) {
+            if (token_array.empty() || token_array.back()->type != IDENTIFIER || !complete_identifier) {
                 new_identifier = *source_code_it;
                 token_array.push_back(new token(IDENTIFIER, new_identifier));
-            } else
+                complete_identifier = true;
+            } else {
                 token_array.back()->value += *source_code_it;
+                complete_identifier = true;
+            }
             ++source_code_it;
         }
     }
