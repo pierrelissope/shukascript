@@ -1,6 +1,6 @@
 name: ShukaScript deployment's actions
 env:
-  EXECUTABLES: 'ShukaScript'
+  EXECUTABLES: 'shukascript'
   pwd: "."
 
 on:
