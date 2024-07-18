@@ -27,7 +27,9 @@ To build the ShukaScript project, follow these steps:
    cd shukascript
    ```
 2. Build the project:
+   ```bash
    make
+   ```
 
 ### How to use it ?
 
