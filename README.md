@@ -22,14 +22,14 @@ ShukaScript is a programming language designed to make learning programming both
 To build the ShukaScript project, follow these steps:
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/shukabiat/shukascript.git
-   cd shukascript
-   ```
+```bash
+git clone https://github.com/shukabiat/shukascript.git
+cd shukascript
+```
 2. Build the project:
-   ```bash
-   make
-   ```
+```bash
+make
+```
 
 ### How to use it ?
 
