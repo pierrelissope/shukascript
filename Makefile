@@ -10,7 +10,7 @@ BIN_DIR = .
 MAIN = $(SRC_DIR)/main.cpp
 MAINOBJ = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(MAIN))
 
-SRC = 
+SRC = $(SRC_DIR)/lexer.cpp
 
 SRCOBJ = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
