@@ -1,0 +1,2 @@
+# shukascript
+Easy programming langage
