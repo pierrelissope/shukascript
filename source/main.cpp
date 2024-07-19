@@ -1,6 +1,6 @@
 #include <fstream>
 
-#include "lexer.h"
+#include "lexer.hpp"
 
 using namespace std;
 
