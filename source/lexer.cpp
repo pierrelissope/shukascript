@@ -15,7 +15,10 @@ static const map<token_type, std::vector<std::string>> tokens_type_map = {
     {C_PARENTHESE, {")"}},
     {O_BRACKET, {"{"}},
     {C_BRACKET, {"}"}},
-    {END_EXPRESSION, {";"}}
+    {END_EXPRESSION, {";"}},
+    {TYPE_IDENTIFIER, {"int", "str", "float"}},
+    {STRUCTURE_IDENTIFIER, {"if", "while"}},
+    {FUNCTION_IDENTIFIER, {"function"}}
 };
 
 vector<token *> Lexer::process(string source_code)
@@ -56,6 +59,5 @@ vector<token *> Lexer::process(string source_code)
             ++source_code_it;
         }
     }
-
     return token_array;
 }

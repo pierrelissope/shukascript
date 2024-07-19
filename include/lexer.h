@@ -15,6 +15,9 @@ enum token_type {
     O_BRACKET, // {
     C_BRACKET, // }
     END_EXPRESSION, // ;
+    TYPE_IDENTIFIER, // int, str, float
+    STRUCTURE_IDENTIFIER, // while, if
+    FUNCTION_IDENTIFIER, // function 
 };
 
 struct token {
