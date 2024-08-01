@@ -6,14 +6,14 @@ function int subtract(int a, int b)
     return a - b;
 }
 
-int deference = subtract(y, x);
+int diff = subtract(y, x);
 
-if (deference > 5) {
-    int result = deference * 2;
+if (diff > 5) {
+    int result = diff * 2;
     call(result, 1, 3);
 }
 
-if (deference <= 5) {
+if (diff <= 5) {
     while (x < 5) {
         x = x + 1;
     }
