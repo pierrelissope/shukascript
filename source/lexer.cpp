@@ -8,9 +8,11 @@ token::token(token_type type, std::string value) {
 }
 
 static const map<token_type, std::vector<std::string>> tokens_type_map = {
-    {OPERATOR, {"+", "-", "/", "*"}},
+    {PRIO_OPERATOR, {"+", "-"}},
+    {NOPRIO_OPERATOR, {"/", "*"}},
     {COMPARATOR, {"==", "<=", ">=", "<", ">"}},
     {ASSIGNATOR, {"="}},
+    {STRING_DELIMITER, {"\'", "\""}},
     {O_PARENTHESE, {"("}},
     {C_PARENTHESE, {")"}},
     {O_BRACKET, {"{"}},
@@ -18,7 +20,8 @@ static const map<token_type, std::vector<std::string>> tokens_type_map = {
     {END_EXPRESSION, {";"}},
     {TYPE_IDENTIFIER, {"int", "str", "float"}},
     {STRUCTURE_IDENTIFIER, {"if", "while"}},
-    {FUNCTION_IDENTIFIER, {"function"}}
+    {FUNCTION_IDENTIFIER, {"function"}},
+    {COMMA, {","}}
 };
 
 vector<token *> Lexer::process(string source_code)

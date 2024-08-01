@@ -1,6 +1,8 @@
 #include <fstream>
 
 #include "lexer.hpp"
+#include "ast.hpp"
+#include "visitor.hpp"
 
 using namespace std;
 
@@ -24,14 +26,20 @@ string open_file(string file_path)
 
 int main(int ac, char **av)
 {
-    string source_code = open_file("./index.shk");
+    string source_code = open_file("./indexs.shk");
     Lexer *lexer = new Lexer();
     vector<token *> array = lexer->process(source_code);
 
-    for (auto it = array.begin(); it != array.end(); ++it) {
-        cout << "value: " << (*it)->value << " type: " <<  (*it)->type << "\n";
-        delete (*it);
-    }
+    AST *ast = new AST();
+    Visitor *v = new Visitor();
+
+    ast->build(array);
+    ast->accept(v);
+
+    // for (auto it = array.begin(); it != array.end(); ++it) {
+        // cout << "value: " << (*it)->value << " type: " <<  (*it)->type << "\n";
+        // delete (*it);
+    // }
 
     array.clear();
     delete lexer;

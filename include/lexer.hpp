@@ -7,9 +7,12 @@
 
 enum token_type {
     IDENTIFIER = 0, // Random Words
-    OPERATOR, // +, -, /, *
+    PRIO_OPERATOR, // /, *
+    NOPRIO_OPERATOR, // +, -
     COMPARATOR, // ==, <=, >=, <, >
     ASSIGNATOR, // =
+    COMMA,
+    STRING_DELIMITER, // ', "
     O_PARENTHESE, // (
     C_PARENTHESE, // )
     O_BRACKET, // {

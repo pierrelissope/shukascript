@@ -1,19 +1,6 @@
 int a = 2;
 int b = 12;
-
-a = a * b;
-
-if (a > 2) {
-    b = b + 1;
-};
-
-while (a < 10) {
-    a = a + 1;
-};
-
-function int addition()
-{
-    return  (a + b);
-};
-
-addition();
+while (1 == 2) {
+    int carré = 90;
+    str bonjour = nop;
+}
