@@ -100,8 +100,6 @@ void AST::build(vector<token *> tokens)
                 exp_tokens.clear();
             } else {
 
-                cout << "-------" << tokens[current_token_index]->value << endl;
-
                 vector<token *> exp_tokens = this->get_expression_tokens(tokens);
                 Expression *new_expression = create_expression(exp_tokens);
                 exp_tokens.clear();
