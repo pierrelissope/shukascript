@@ -38,6 +38,8 @@ void Visitor::visit_expression(Expression *node) {
         return;
     cout << "Visiting Expression: ";
     cout << "\n";
+    node->left->accept(this);
+    node->right->accept(this);
 }
 
 void Visitor::visit_assignement(Assignement *node) {

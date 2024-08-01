@@ -45,9 +45,6 @@ void Assignement::accept(Visitor *v) {
 
 void Expression::accept(Visitor *v) {
     v->visit_expression(this);
-
-    this->left->accept(v);
-    this->right->accept(v);
 }
 
 void Structure::accept(Visitor *v) {
