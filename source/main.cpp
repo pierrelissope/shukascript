@@ -34,7 +34,7 @@ int main(int ac, char **av)
     Visitor *v = new Visitor();
 
     ast->build(array);
-    ast->accept(v);
+    ast->accept(nullptr, v);
 
     // for (auto it = array.begin(); it != array.end(); ++it) {
         // cout << "value: " << (*it)->value << " type: " <<  (*it)->type << "\n";

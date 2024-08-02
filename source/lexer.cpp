@@ -54,7 +54,7 @@ vector<token *> Lexer::process(string source_code)
             if (!is_identifier)
                 break;
         }
-        for (auto map_it = tokens_keyword_map.begin(); !complete_identifier && map_it != tokens_keyword_map.end(); ++map_it) {
+        for (auto map_it = tokens_keyword_map.begin(); (!complete_identifier || source_code_it == source_code.begin()) && map_it != tokens_keyword_map.end(); ++map_it) {
             for (auto list_it = map_it->second.begin(); list_it != map_it->second.end(); ++list_it) {
                 if (source_code.substr(std::distance(source_code.begin(), source_code_it), list_it->length()) == (*list_it)) {
                     token_array.push_back(new token(map_it->first, (*list_it)));

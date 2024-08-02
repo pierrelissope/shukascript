@@ -2,9 +2,9 @@
 
 using namespace std;
 
-void AST::accept(Visitor *v) {
+void AST::accept(AST *parent_node, Visitor *v) {
     for (AST *node : nodes)
-        node->accept(v);
+        node->accept(this, v);
 }
 
 vector<token *> AST::get_expression_tokens(vector<token *> tokens) {
@@ -166,19 +166,19 @@ void AST::build(vector<token *> tokens)
                         } else {
                             args_types.clear();
                             args.clear();
-                            cerr << "Error: you must add content inside your structure";
+                            cerr << "Error: you must add content inside your structure" << endl;
                             break;
                         }
                     } else {
-                        cerr << "Error: Invalid token missing (";
+                        cerr << "Error: Invalid token missing (" << endl;
                         break;
                     }
                 } else {
-                    cerr << "Error: each function must have a name";
+                    cerr << "Error: each function must have a name" << endl;
                     break;
                 }
             } else {
-                cerr << "Error: each function must have a type identifier";
+                cerr << "Error: each function must have a type identifier" << endl;
                 break;
             }
             
