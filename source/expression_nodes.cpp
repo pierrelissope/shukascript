@@ -70,7 +70,6 @@ Expression *Expression_Parser::parse_mul_div(void)
     Expression *node = parse_parentheses();
     Expression *right = nullptr;
     
-
     while (current_token_index < tokens.size() && tokens[current_token_index]->type == PRIO_OPERATOR) {
         string op = tokens[current_token_index++]->value;
         right = parse_parentheses();
@@ -137,8 +136,6 @@ Expression *Expression_Parser::parse_value(void)
 
     } else if (tokens[current_token_index]->type == IDENTIFIER) {
 
-        
-
         if (current_token_index + 1 < tokens.size() && tokens[current_token_index + 1]->type == O_PARENTHESE) {
             FunctionCallNode *fcall_node = new FunctionCallNode();
 
@@ -155,23 +152,25 @@ Expression *Expression_Parser::parse_value(void)
                     tokens[current_token_index]->type == C_PARENTHESE ||
                     tokens[current_token_index]->type == COMPARATOR ||
                     tokens[current_token_index]->type == PRIO_OPERATOR ||
-                    tokens[current_token_index]->type == NOPRIO_OPERATOR)) {
+                    tokens[current_token_index]->type == NOPRIO_OPERATOR) &&
+                    o_count != 0) {
 
                     if (tokens[current_token_index]->type == C_PARENTHESE)
                         --o_count;
                     if (tokens[current_token_index]->type == O_PARENTHESE)
                         ++o_count;
-                    
+                    if (o_count == 0)
+                        break;
                     new_tokens.push_back(tokens[current_token_index]);
                     ++current_token_index;
                 }
-
                 Expression *expression = create_expression(new_tokens);
                 fcall_node->args.push_back(expression);
                 new_tokens.clear();
 
-                if (current_token_index < tokens.size() && tokens[current_token_index]->type == COMMA)                
+                if (current_token_index < tokens.size() && tokens[current_token_index]->type == COMMA){
                     ++current_token_index;
+                }
             }
             ++current_token_index;
             return fcall_node;

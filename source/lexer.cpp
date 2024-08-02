@@ -8,8 +8,8 @@ token::token(token_type type, std::string value) {
 }
 
 static const map<token_type, std::vector<std::string>> tokens_type_map = {
-    {PRIO_OPERATOR, {"+", "-"}},
-    {NOPRIO_OPERATOR, {"/", "*"}},
+    {NOPRIO_OPERATOR, {"+", "-"}},
+    {PRIO_OPERATOR, {"/", "*"}},
     {COMPARATOR, {"==", "<=", ">=", "<", ">"}},
     {ASSIGNATOR, {"="}},
     {STRING_DELIMITER, {"\'", "\""}},
@@ -22,7 +22,7 @@ static const map<token_type, std::vector<std::string>> tokens_type_map = {
 };
 
 static const map<token_type, std::vector<std::string>> tokens_keyword_map = {
-    {TYPE_IDENTIFIER, {"int", "str", "float"}},
+    {TYPE_IDENTIFIER, {"int", "str", "float", "variant"}},
     {STRUCTURE_IDENTIFIER, {"if", "while"}},
     {FUNCTION_IDENTIFIER, {"function"}},
 };

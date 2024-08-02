@@ -1,11 +1,7 @@
-int x = 2;
-int y = 10;
-
 function int addition(int a, int b)
 {
-    while (a < 10) {
-        a = a + 1;
-    }
+    return(a + b);
 }
 
-addition(1 + (8 + 1 - (5 * 2 + 4)) * 0, 2);
+v = addition(20, 2) + 10 + addition(20, 2) * 2;
+print(v);

@@ -1,14 +1,61 @@
-#include "syscalls.hpp"
 #include "ast.hpp"
 #include "visitor.hpp"
 
-variant_t Expression::evaluate(std::map<std::string, variant_t> variables, Visitor *v)
-{
-    if (!op.empty() && left && right) {
-        auto left_val = left->evaluate(variables, v);
-        auto right_val = right->evaluate(variables, v);
+typedef void (*syscallo)(std::string name, std::vector<Expression *> args, AST *parent_node, Visitor *v);
 
-        return std::visit([this](auto&& l, auto&& r) -> variant_t {
+void print(std::string name, std::vector<Expression *> args, AST *parent_node, Visitor *v)
+{
+    for (auto element : args) {
+        variant_t vvalue = element->evaluate(parent_node->variables, v);
+        if (std::holds_alternative<int>(vvalue)) {
+            int int_value = std::get<int>(vvalue);
+            std::cout << int_value;
+        } else if (std::holds_alternative<double>(vvalue)) {
+            double double_value = std::get<double>(vvalue);
+            std::cout << double_value;
+        } else if (std::holds_alternative<std::string>(vvalue)) {
+            std::string string_value = std::get<std::string>(vvalue);
+            std::cout << string_value;
+        } else {
+            std::cout << "Unrecognized value" << std::endl;
+        }
+    }
+    std::cout << std::endl;
+}
+
+void returnsyscall(std::string name, std::vector<Expression *> args, AST *parent_node, Visitor *v)
+{
+    for (auto element : args) {
+        v->ret_value = element->evaluate(parent_node->variables, v);
+        return;
+    }
+}
+
+int call_sysfunctions(std::string name, std::vector<Expression *> args, AST *parent_node, Visitor *v)
+{
+    static const std::map<std::string, syscallo> sys_fct_map = {
+        {"print", print},
+        {"return", returnsyscall}
+    };
+
+    for (auto it = sys_fct_map.begin(); it != sys_fct_map.end(); ++it) {
+        if ((*it).first == name) {
+            (*it).second(name, args, parent_node, v);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+variant_t Expression::evaluate(std::map<std::string, variant_t> variables, Visitor *v)
+{    
+    if (!op.empty() && left && right) {
+
+        auto right_val = left->evaluate(variables, v);
+        auto left_val = right->evaluate(variables, v);
+
+        variant_t res = std::visit([this](auto&& l, auto&& r) -> variant_t {
             using LType = std::decay_t<decltype(l)>;
             using RType = std::decay_t<decltype(r)>;
 
@@ -27,6 +74,7 @@ variant_t Expression::evaluate(std::map<std::string, variant_t> variables, Visit
             }
             throw std::runtime_error("Unhandled case in expression evaluation");
         }, left_val, right_val);
+        return res;
     } else {
         throw std::runtime_error("Invalid operation on arithmetic types");
         return 1;
@@ -39,6 +87,7 @@ variant_t ValueNode::evaluate(std::map<std::string, variant_t> variables, Visito
 }
 
 variant_t FunctionCallNode::evaluate(std::map<std::string, variant_t> variables, Visitor *v) {
+
     if (variables.find(this->name) != variables.end()) {
         if (std::holds_alternative<Function *>(variables[this->name])) {
             auto functionNode = std::get<Function *>(variables[this->name]);
@@ -49,7 +98,6 @@ variant_t FunctionCallNode::evaluate(std::map<std::string, variant_t> variables,
                 
                 for (auto fcallnode : functionNode->nodes)
                     fcallnode->accept(functionNode, v);
-
                 return v->ret_value;
             } else {
                 throw std::runtime_error("Function: " + this->name + " has an incorrect number of arguments");
@@ -59,7 +107,8 @@ variant_t FunctionCallNode::evaluate(std::map<std::string, variant_t> variables,
         }
     } else {
 
-        if (call_sysfunctions(this->name, this->args, v))
+        this->variables = variables;
+        if (call_sysfunctions(this->name, this->args, this, v))
             return v->ret_value;
 
         throw std::runtime_error("Function: " + this->name + " is not defined");

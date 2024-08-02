@@ -1,5 +1,6 @@
 #ifndef AST_H
 
+#include <iostream>
 #include <variant>
 
 #include "lexer.hpp"
