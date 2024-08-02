@@ -1,6 +1,7 @@
 #ifndef AST_H
 
 #include <variant>
+
 #include "lexer.hpp"
 
 class Visitor;

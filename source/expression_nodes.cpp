@@ -144,17 +144,24 @@ Expression *Expression_Parser::parse_value(void)
 
             fcall_node->name = tokens[current_token_index]->value;
             current_token_index += 2;
-            while (current_token_index < tokens.size() && tokens[current_token_index]->type != C_PARENTHESE) {
+            int o_count = 1;
+            while (current_token_index < tokens.size() && o_count != 0) {
                 
                 vector<token *> new_tokens;
                 while (current_token_index < tokens.size() &&
                    (tokens[current_token_index]->type == IDENTIFIER ||
                     tokens[current_token_index]->type == STRING_DELIMITER ||
-                    //tokens[current_token_index]->type == O_PARENTHESE ||
-                    //tokens[current_token_index]->type == C_PARENTHESE ||
+                    tokens[current_token_index]->type == O_PARENTHESE ||
+                    tokens[current_token_index]->type == C_PARENTHESE ||
                     tokens[current_token_index]->type == COMPARATOR ||
                     tokens[current_token_index]->type == PRIO_OPERATOR ||
                     tokens[current_token_index]->type == NOPRIO_OPERATOR)) {
+
+                    if (tokens[current_token_index]->type == C_PARENTHESE)
+                        --o_count;
+                    if (tokens[current_token_index]->type == O_PARENTHESE)
+                        ++o_count;
+                    
                     new_tokens.push_back(tokens[current_token_index]);
                     ++current_token_index;
                 }

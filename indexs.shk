@@ -8,4 +8,4 @@ function int addition(int a, int b)
     }
 }
 
-addition(1 + (8), 2);
+addition(1 + (8 + 1 - (5 * 2 + 4)) * 0, 2);

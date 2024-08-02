@@ -1,3 +1,4 @@
+#include "syscalls.hpp"
 #include "ast.hpp"
 #include "visitor.hpp"
 
@@ -38,7 +39,6 @@ variant_t ValueNode::evaluate(std::map<std::string, variant_t> variables, Visito
 }
 
 variant_t FunctionCallNode::evaluate(std::map<std::string, variant_t> variables, Visitor *v) {
-    printf("iciii\n");
     if (variables.find(this->name) != variables.end()) {
         if (std::holds_alternative<Function *>(variables[this->name])) {
             auto functionNode = std::get<Function *>(variables[this->name]);
@@ -50,7 +50,7 @@ variant_t FunctionCallNode::evaluate(std::map<std::string, variant_t> variables,
                 for (auto fcallnode : functionNode->nodes)
                     fcallnode->accept(functionNode, v);
 
-                return {}; // Return a default-constructed variant_t (or an appropriate value)
+                return v->ret_value;
             } else {
                 throw std::runtime_error("Function: " + this->name + " has an incorrect number of arguments");
             }
@@ -59,13 +59,11 @@ variant_t FunctionCallNode::evaluate(std::map<std::string, variant_t> variables,
         }
     } else {
 
-        for (auto it = variables.begin(); it != variables.end(); ++it) {
-            std::cout << "var: " << (*it).first << std::endl; 
-        }
-
+        if (call_sysfunctions(this->name, this->args, v))
+            return v->ret_value;
 
         throw std::runtime_error("Function: " + this->name + " is not defined");
-        return {}; // Return a default-constructed variant_t (or an appropriate value)
+        return {};
     }
 }
 
