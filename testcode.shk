@@ -31,7 +31,7 @@ function variant main(choice)
         print("tour de boucle");
     }
     fonctionincroyable();
-    print("this is the end" + );
+    print("this is the end", " ", "hope u enjoyed");
     print("MADE BY SHUKABIAT");
 }
 
