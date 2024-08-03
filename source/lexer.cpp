@@ -27,7 +27,7 @@ static const map<token_type, std::vector<std::string>> tokens_keyword_map = {
     {FUNCTION_IDENTIFIER, {"function"}},
 };
 
-vector<token *> Lexer::process(string source_code)
+vector<shared_ptr<token>> Lexer::process(string source_code)
 {
     source_code_it = source_code.begin();
     bool is_identifier = true;
@@ -44,7 +44,7 @@ vector<token *> Lexer::process(string source_code)
         for (auto map_it = tokens_type_map.begin(); map_it != tokens_type_map.end(); ++map_it) {
             for (auto list_it = map_it->second.begin(); list_it != map_it->second.end(); ++list_it) {
                 if (source_code.substr(std::distance(source_code.begin(), source_code_it), list_it->length()) == (*list_it)) {
-                    token_array.push_back(new token(map_it->first, (*list_it)));
+                    token_array.push_back(make_shared<token>(map_it->first, (*list_it)));
                     is_identifier = false;
                     complete_identifier = false;
                     source_code_it += list_it->length();
@@ -57,7 +57,7 @@ vector<token *> Lexer::process(string source_code)
         for (auto map_it = tokens_keyword_map.begin(); (!complete_identifier || source_code_it == source_code.begin()) && map_it != tokens_keyword_map.end(); ++map_it) {
             for (auto list_it = map_it->second.begin(); list_it != map_it->second.end(); ++list_it) {
                 if (source_code.substr(std::distance(source_code.begin(), source_code_it), list_it->length()) == (*list_it)) {
-                    token_array.push_back(new token(map_it->first, (*list_it)));
+                    token_array.push_back(make_shared<token>(map_it->first, (*list_it)));
                     is_identifier = false;
                     complete_identifier = false;
                     source_code_it += list_it->length();
@@ -70,7 +70,7 @@ vector<token *> Lexer::process(string source_code)
         if (is_identifier) {
             if (token_array.empty() || token_array.back()->type != IDENTIFIER || !complete_identifier) {
                 new_identifier = *source_code_it;
-                token_array.push_back(new token(IDENTIFIER, new_identifier));
+                token_array.push_back(make_shared<token>(IDENTIFIER, new_identifier));
                 complete_identifier = true;
             } else {
                 token_array.back()->value += *source_code_it;

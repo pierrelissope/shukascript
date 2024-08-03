@@ -3,9 +3,10 @@
 
 #include <variant>
 #include <string>
+#include <memory>
 
 class Function;
 
-typedef std::variant<int, double, std::string, Function *> variant_t;
+typedef std::variant<int, double, std::string, std::shared_ptr<Function>> variant_t;
 
 #endif /* !SHKVARIANT_HPP_ */

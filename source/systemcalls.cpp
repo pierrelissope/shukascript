@@ -7,7 +7,7 @@
 #include "ast.hpp"
 #include "visitor.hpp"
 
-void print(std::vector<Expression *> args, AST *parent_node, Visitor *v)
+void print(std::vector<std::shared_ptr<Expression>> args, std::shared_ptr<AST> parent_node, std::shared_ptr<Visitor> v)
 {
     for (auto element : args) {
         variant_t vvalue = element->evaluate(parent_node->variables, v);
@@ -27,7 +27,7 @@ void print(std::vector<Expression *> args, AST *parent_node, Visitor *v)
     std::cout << std::endl;
 }
 
-void returnsyscall(std::vector<Expression *> args, AST *parent_node, Visitor *v)
+void returnsyscall(std::vector<std::shared_ptr<Expression>> args, std::shared_ptr<AST> parent_node, std::shared_ptr<Visitor> v)
 {
     for (auto element : args) {
         v->ret_value = element->evaluate(parent_node->variables, v);
@@ -35,7 +35,7 @@ void returnsyscall(std::vector<Expression *> args, AST *parent_node, Visitor *v)
     }
 }
 
-void randomsyscall(std::vector<Expression *> args, AST *parent_node, Visitor *v)
+void randomsyscall(std::vector<std::shared_ptr<Expression>> args, std::shared_ptr<AST> parent_node, std::shared_ptr<Visitor> v)
 {
     if (args.size() != 2) {
         throw std::runtime_error("Funtion: Random require 2 arguments but " + std::to_string(args.size()) + " are given");
@@ -59,7 +59,7 @@ void randomsyscall(std::vector<Expression *> args, AST *parent_node, Visitor *v)
     }
 }
 
-void exitsyscall(std::vector<Expression *> args, AST *parent_node, Visitor *v)
+void exitsyscall(std::vector<std::shared_ptr<Expression>> args, std::shared_ptr<AST> parent_node, std::shared_ptr<Visitor> v)
 {
     for (auto element : args) {
         variant_t vvalue = element->evaluate(parent_node->variables, v);
@@ -71,7 +71,7 @@ void exitsyscall(std::vector<Expression *> args, AST *parent_node, Visitor *v)
     exit(0);
 }
 
-int call_sysfunctions(std::string name, std::vector<Expression *> args, AST *parent_node, Visitor *v)
+int call_sysfunctions(std::string name, std::vector<std::shared_ptr<Expression>> args, std::shared_ptr<AST> parent_node, std::shared_ptr<Visitor> v)
 {
     static const std::map<std::string, syscallo> sys_fct_map = {
         {"print", print},

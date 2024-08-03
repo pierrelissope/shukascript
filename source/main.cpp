@@ -45,14 +45,13 @@ int main(int ac, char **av)
     }
     if (source_code == "")
         return 1;
-    Lexer *lexer = new Lexer();
-    vector<token *> array = lexer->process(source_code);
-    AST *ast = new AST();
-    Visitor *v = new Visitor();
+    shared_ptr<Lexer> lexer = make_shared<Lexer>();
+    vector<shared_ptr<token>> array = lexer->process(source_code);
+    shared_ptr<AST> ast = make_shared<AST>();
+    shared_ptr<Visitor> v = make_shared<Visitor>();
 
     ast->build(array);
     ast->accept(nullptr, v);
     array.clear();
-    delete lexer;
     return 0;
 }

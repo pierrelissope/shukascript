@@ -4,7 +4,7 @@
 #include "visitor.hpp"
 #include "shkcalls.hpp"
 
-variant_t Expression::evaluate(std::map<std::string, variant_t> variables, Visitor *v)
+variant_t Expression::evaluate(std::map<std::string, variant_t> variables, std::shared_ptr<Visitor> v)
 {    
     if (!op.empty() && left && right) {
         auto left_val = left->evaluate(variables, v);
@@ -44,16 +44,18 @@ variant_t Expression::evaluate(std::map<std::string, variant_t> variables, Visit
     }
 }
 
-variant_t ValueNode::evaluate(std::map<std::string, variant_t> , Visitor *)
+variant_t ValueNode::evaluate(std::map<std::string, variant_t> , std::shared_ptr<Visitor> )
 {
     return value;
 }
 
-variant_t FunctionCallNode::evaluate(std::map<std::string, variant_t> variables, Visitor *v) {
+variant_t FunctionCallNode::evaluate(std::map<std::string, variant_t> variables, std::shared_ptr<Visitor> v) {
+
+    std::shared_ptr<FunctionCallNode> self = std::dynamic_pointer_cast<FunctionCallNode>(shared_from_this());
 
     if (variables.find(this->name) != variables.end()) {
-        if (std::holds_alternative<Function *>(variables[this->name])) {
-            auto functionNode = std::get<Function *>(variables[this->name]);
+        if (std::holds_alternative<std::shared_ptr<Function>>(variables[this->name])) {
+            auto functionNode = std::get<std::shared_ptr<Function>>(variables[this->name]);
             if (functionNode->args.size() == this->args.size()) {
                 functionNode->variables = variables;
                 for (std::size_t i = 0; i < functionNode->args.size(); ++i)
@@ -72,7 +74,7 @@ variant_t FunctionCallNode::evaluate(std::map<std::string, variant_t> variables,
     } else {
 
         this->variables = variables;
-        if (call_sysfunctions(this->name, this->args, this, v))
+        if (call_sysfunctions(this->name, this->args, self, v))
             return v->ret_value;
 
         throw std::runtime_error("Function: " + this->name + " is not defined");
@@ -80,7 +82,7 @@ variant_t FunctionCallNode::evaluate(std::map<std::string, variant_t> variables,
     }
 }
 
-variant_t VariableNode::evaluate(std::map<std::string, variant_t> variables, Visitor *)
+variant_t VariableNode::evaluate(std::map<std::string, variant_t> variables, std::shared_ptr<Visitor> )
 {
     if (variables.find(this->name) != variables.end())
         return variables[this->name];

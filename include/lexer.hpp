@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <memory>
 
 enum token_type {
     IDENTIFIER = 0, // Random Words
@@ -33,11 +34,11 @@ struct token {
 class Lexer {
 
     private:
-        std::vector<token *> token_array;
+        std::vector<std::shared_ptr<token>> token_array;
         std::string::iterator source_code_it;
     public:
         Lexer(void) {};
-        std::vector<token *> process(std::string);
+        std::vector<std::shared_ptr<token>> process(std::string);
 };
 
 #define LEXER_H_

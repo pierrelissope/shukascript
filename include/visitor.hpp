@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
 
 #include "shkvariant.hpp"
 
@@ -16,21 +17,21 @@ class Assignement;
 class Structure;
 class Function;
 
-class Visitor {
+class Visitor : public std::enable_shared_from_this<Visitor> {
     public:
         Visitor() = default;
         ~Visitor() = default;
 
         variant_t ret_value;
 
-        void visit_value(AST *parent_node, ValueNode *node);
-        void visit_fcall(AST *parent_node, FunctionCallNode *node);
-        void visit_variable(AST *parent_node, VariableNode *node);
+        void visit_value(std::shared_ptr<AST> parent_node, std::shared_ptr<ValueNode> node);
+        void visit_fcall(std::shared_ptr<AST> parent_node, std::shared_ptr<FunctionCallNode> node);
+        void visit_variable(std::shared_ptr<AST> parent_node, std::shared_ptr<VariableNode> node);
 
-        void visit_expression(AST *parent_node, Expression *node);
-        void visit_assignement(AST *parent_node, Assignement *node);
-        void visit_structure(AST *parent_node, Structure *node);
-        void visit_function(AST *parent_node, Function *node);
+        void visit_expression(std::shared_ptr<AST> parent_node, std::shared_ptr<Expression> node);
+        void visit_assignement(std::shared_ptr<AST> parent_node, std::shared_ptr<Assignement> node);
+        void visit_structure(std::shared_ptr<AST> parent_node, std::shared_ptr<Structure> node);
+        void visit_function(std::shared_ptr<AST> parent_node, std::shared_ptr<Function> node);
 };
 
 #define VISITOR_H
