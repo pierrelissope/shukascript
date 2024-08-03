@@ -166,6 +166,7 @@ Expression *Expression_Parser::parse_value(void)
                     tokens[current_token_index]->type == C_PARENTHESE ||
                     tokens[current_token_index]->type == COMPARATOR ||
                     tokens[current_token_index]->type == PRIO_OPERATOR ||
+                    (tokens[current_token_index]->type == COMMA && o_count != 1) ||
                     tokens[current_token_index]->type == NOPRIO_OPERATOR) &&
                     o_count != 0) {
 

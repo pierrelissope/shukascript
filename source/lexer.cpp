@@ -10,7 +10,7 @@ token::token(token_type type, std::string value) {
 static const map<token_type, std::vector<std::string>> tokens_type_map = {
     {NOPRIO_OPERATOR, {"+", "-"}},
     {PRIO_OPERATOR, {"/", "*"}},
-    {COMPARATOR, {"==", "<=", ">=", "<", ">"}},
+    {COMPARATOR, {"==", "<=", ">=", "<", ">", "||", "&&"}},
     {ASSIGNATOR, {"="}},
     {STRING_DELIMITER, {"\'", "\""}},
     {O_PARENTHESE, {"("}},

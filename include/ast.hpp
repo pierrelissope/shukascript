@@ -1,15 +1,13 @@
 #ifndef AST_H
 
 #include <iostream>
-#include <variant>
 
+#include "shkvariant.hpp"
 #include "lexer.hpp"
 
 class Visitor;
 class AST;
 class Function;
-
-typedef std::variant<int, double, std::string, Function *> variant_t;
 
 class AST {
     public:

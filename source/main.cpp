@@ -31,8 +31,18 @@ string open_file(string file_path)
 
 int main(int ac, char **av)
 {
-    string source_code = open_file(av[1]);
+    if (ac < 2) {
+        std::cerr << "Error: no input file" << std::endl;
+        return 1;
+    }
+    string source_code = "";
 
+    for (int i = 1; av[i] != nullptr; ++i) {
+        string file_content = open_file(av[i]);
+        if (file_content == "")
+            return 1;
+        source_code += file_content + "\n";
+    }
     if (source_code == "")
         return 1;
     Lexer *lexer = new Lexer();
