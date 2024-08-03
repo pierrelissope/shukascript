@@ -105,7 +105,7 @@ void luigi_to_string(std::vector<Expression *> args, AST *parent_node, Visitor *
     for (auto element : args) {
         variant_t vvalue = element->evaluate(parent_node->variables, v);
         if (std::holds_alternative<int>(vvalue)) {
-            std::string res = 0;
+            std::string res;
             int nb_value = std::get<int>(vvalue);
 
             res = std::to_string(nb_value);
