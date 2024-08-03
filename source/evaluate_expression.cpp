@@ -1,3 +1,5 @@
+#include <type_traits>
+
 #include "ast.hpp"
 #include "visitor.hpp"
 #include "shkcalls.hpp"
@@ -26,7 +28,12 @@ variant_t Expression::evaluate(std::map<std::string, variant_t> variables, Visit
                 if (this->op == "&&") return l && r;
                 if (this->op == "||") return l || r;
             } else {
-                throw std::runtime_error("Invalid operation on non-arithmetic types");
+
+                if (std::is_same_v<LType, std::string> && std::is_same_v<RType, std::string>) {
+                    if (this->op == "+") return l + r;
+                } else {
+                    throw std::runtime_error("Invalid operation on non-arithmetic types");
+                }
             }
             throw std::runtime_error("Unhandled case in expression evaluation");
         }, left_val, right_val);
