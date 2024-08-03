@@ -1,0 +1,11 @@
+function variant retour(index)
+{
+    if (index > 90) {
+        return("Geant");
+    }
+    if (index <= 90) {
+        return("minus");
+    }
+}
+
+print(retour(1000));

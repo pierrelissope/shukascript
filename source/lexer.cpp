@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include "lexer.hpp"
 
 using namespace std;
 
@@ -8,14 +8,23 @@ token::token(token_type type, std::string value) {
 }
 
 static const map<token_type, std::vector<std::string>> tokens_type_map = {
-    {OPERATOR, {"+", "-", "/", "*"}},
-    {COMPARATOR, {"==", "<=", ">=", "<", ">"}},
+    {NOPRIO_OPERATOR, {"+", "-"}},
+    {PRIO_OPERATOR, {"/", "*"}},
+    {COMPARATOR, {"==", "<=", ">=", "<", ">", "||", "&&"}},
     {ASSIGNATOR, {"="}},
+    {STRING_DELIMITER, {"\'", "\""}},
     {O_PARENTHESE, {"("}},
     {C_PARENTHESE, {")"}},
     {O_BRACKET, {"{"}},
     {C_BRACKET, {"}"}},
-    {END_EXPRESSION, {";"}}
+    {END_EXPRESSION, {";"}},
+    {COMMA, {","}}
+};
+
+static const map<token_type, std::vector<std::string>> tokens_keyword_map = {
+    {TYPE_IDENTIFIER, {"int", "str", "float", "variant"}},
+    {STRUCTURE_IDENTIFIER, {"if", "while"}},
+    {FUNCTION_IDENTIFIER, {"function"}},
 };
 
 vector<token *> Lexer::process(string source_code)
@@ -37,6 +46,20 @@ vector<token *> Lexer::process(string source_code)
                 if (source_code.substr(std::distance(source_code.begin(), source_code_it), list_it->length()) == (*list_it)) {
                     token_array.push_back(new token(map_it->first, (*list_it)));
                     is_identifier = false;
+                    complete_identifier = false;
+                    source_code_it += list_it->length();
+                    break;
+                }
+            }
+            if (!is_identifier)
+                break;
+        }
+        for (auto map_it = tokens_keyword_map.begin(); (!complete_identifier || source_code_it == source_code.begin()) && map_it != tokens_keyword_map.end(); ++map_it) {
+            for (auto list_it = map_it->second.begin(); list_it != map_it->second.end(); ++list_it) {
+                if (source_code.substr(std::distance(source_code.begin(), source_code_it), list_it->length()) == (*list_it)) {
+                    token_array.push_back(new token(map_it->first, (*list_it)));
+                    is_identifier = false;
+                    complete_identifier = false;
                     source_code_it += list_it->length();
                     break;
                 }
@@ -56,6 +79,5 @@ vector<token *> Lexer::process(string source_code)
             ++source_code_it;
         }
     }
-
     return token_array;
 }

@@ -7,14 +7,20 @@
 
 enum token_type {
     IDENTIFIER = 0, // Random Words
-    OPERATOR, // +, -, /, *
-    COMPARATOR, // ==, <=, >=, <, >
+    PRIO_OPERATOR, // /, *
+    NOPRIO_OPERATOR, // +, -
+    COMPARATOR, // ==, <=, >=, <, >, &&, ||
     ASSIGNATOR, // =
+    COMMA,
+    STRING_DELIMITER, // ', "
     O_PARENTHESE, // (
     C_PARENTHESE, // )
     O_BRACKET, // {
     C_BRACKET, // }
     END_EXPRESSION, // ;
+    TYPE_IDENTIFIER, // int, str, float
+    STRUCTURE_IDENTIFIER, // while, if
+    FUNCTION_IDENTIFIER, // function 
 };
 
 struct token {
