@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void AST::accept(AST *parent_node, Visitor *v) {
+void AST::accept(AST *, Visitor *v) {
     for (AST *node : nodes)
         node->accept(this, v);
 }

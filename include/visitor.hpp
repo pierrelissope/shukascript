@@ -1,8 +1,9 @@
+#ifndef VISITOR_H
+
 #include <iostream>
-#include <variant>
 #include <string>
 
-#ifndef VISITOR_H
+#include "shkvariant.hpp"
 
 class AST;
 
@@ -14,8 +15,6 @@ class Expression;
 class Assignement;
 class Structure;
 class Function;
-
-typedef std::variant<int, double, std::string, Function *> variant_t;
 
 class Visitor {
     public:
