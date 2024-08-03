@@ -1,20 +1,27 @@
 #ifndef AST_H
 
+#include <iostream>
 #include <variant>
+
 #include "lexer.hpp"
 
 class Visitor;
+class AST;
+class Function;
+
+typedef std::variant<int, double, std::string, Function *> variant_t;
 
 class AST {
     public:
         AST() = default;
         virtual ~AST() = default;
 
+        std::map<std::string, variant_t> variables;
+
         std::vector<AST *> nodes;
         std::size_t current_token_index = 0;
 
-        virtual void accept(Visitor *v);
-        void safe_increment(int val, std::vector<token *> tokens);
+        virtual void accept(AST *parent_node, Visitor *v);
 
         std::vector<token *> get_expression_tokens(std::vector<token *> tokens);
         std::vector<token *> get_structure_tokens(std::vector<token *> tokens);
@@ -22,6 +29,7 @@ class AST {
 
         void build(std::vector<token *> tokens);
 };
+
 
 class Expression : public AST {
     public:
@@ -31,8 +39,8 @@ class Expression : public AST {
         Expression *left = nullptr;
         Expression *right = nullptr;
 
-        virtual void accept(Visitor *v) override;
-        virtual void evaluate(void);
+        virtual void accept(AST *parent_node, Visitor *v) override;
+        virtual variant_t evaluate(std::map<std::string, variant_t> variables, Visitor *v);
 };
 
 class Expression_Parser {
@@ -53,10 +61,10 @@ class ValueNode : public Expression {
 
     public:
 
-        std::variant<int, double, std::string> value;
+        variant_t value;
     
-        void accept(Visitor *v) override;
-        void evaluate(void) override;
+        void accept(AST *parent_node, Visitor *v) override;
+        variant_t evaluate(std::map<std::string, variant_t> variables, Visitor *v) override;
 
 };
 
@@ -65,8 +73,8 @@ class VariableNode : public Expression {
     
         std::string name;
 
-        void accept(Visitor *v) override;
-        void evaluate(void) override;
+        void accept(AST *parent_node, Visitor *v) override;
+        variant_t evaluate(std::map<std::string, variant_t> variables, Visitor *v) override;
 };
 
 class FunctionCallNode : public Expression {
@@ -76,14 +84,14 @@ class FunctionCallNode : public Expression {
         std::string name;
         std::vector<Expression *> args;
     
-        void accept(Visitor *v) override;
-        void evaluate(void) override;
+        void accept(AST *parent_node, Visitor *v) override;
+        variant_t evaluate(std::map<std::string, variant_t> variables, Visitor *v) override;
 
 };
 
 class Assignement : public AST {
     public:
-        void accept(Visitor *v) override;
+        void accept(AST *parent_node, Visitor *v) override;
 
         std::string var_type;
         std::string var_name;
@@ -99,14 +107,14 @@ class Structure : public AST{
         std::vector<token *> tokens;
         Expression *expression;
 
-        void accept(Visitor *v) override;
+        void accept(AST *parent_node, Visitor *v) override;
 
         Structure(std::string struct_type, Expression *expression, std::vector<token *>tokens);
 };
 
 class Function : public AST {
     public:
-        void accept(Visitor *v) override;
+        void accept(AST *parent_node, Visitor *v) override;
 
         std::string name;
         std::string return_type;

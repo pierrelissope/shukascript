@@ -1,6 +1,7 @@
 int a = 2;
 int b = 12;
-while (1 == 2) {
+while (2 == 2) {
     int carré = 90;
-    str bonjour = nop;
+    str bonjour = 1;
+    print("hello world");
 }

@@ -26,31 +26,33 @@ Function::Function(std::vector<token *>tokens, std::string return_type, std::str
     this->build(tokens);
 }
 
-void ValueNode::accept(Visitor *v) {
-    v->visit_value(this);
+void ValueNode::accept(AST *parent_node, Visitor *v) {
+    v->visit_value(parent_node, this);
 }
 
-void VariableNode::accept(Visitor *v) {
-    v->visit_variable(this);
+void VariableNode::accept(AST *parent_node, Visitor *v) {
+    v->visit_variable(parent_node, this);
 }
 
-void FunctionCallNode::accept(Visitor *v) {
-    v->visit_fcall(this);
+void FunctionCallNode::accept(AST *parent_node, Visitor *v) {
+    v->visit_fcall(parent_node, this);
 }
 
 
-void Assignement::accept(Visitor *v) {
-    v->visit_assignement(this);
+
+
+void Assignement::accept(AST *parent_node, Visitor *v) {
+    v->visit_assignement(parent_node, this);
 }
 
-void Expression::accept(Visitor *v) {
-    v->visit_expression(this);
+void Expression::accept(AST *parent_node, Visitor *v) {
+    v->visit_expression(parent_node, this);
 }
 
-void Structure::accept(Visitor *v) {
-    v->visit_structure(this);
+void Structure::accept(AST *parent_node, Visitor *v) {
+    v->visit_structure(parent_node, this);
 }
 
-void Function::accept(Visitor *v) {
-    v->visit_function(this);
+void Function::accept(AST *parent_node, Visitor *v) {
+    v->visit_function(parent_node, this);
 }
