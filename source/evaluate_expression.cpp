@@ -23,6 +23,8 @@ variant_t Expression::evaluate(std::map<std::string, variant_t> variables, Visit
                 if (this->op == ">=") return l >= r;
                 if (this->op == "<=") return l <= r;
                 if (this->op == "==") return l == r;
+                if (this->op == "&&") return l && r;
+                if (this->op == "||") return l || r;
             } else {
                 throw std::runtime_error("Invalid operation on non-arithmetic types");
             }
