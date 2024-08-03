@@ -34,15 +34,19 @@ Expression *Expression_Parser::parse_cmp(void)
     Expression *node = parse_add_min();
     Expression *right = nullptr;
     
-
+    if (node == nullptr)
+        return nullptr;
     while (current_token_index < tokens.size() && tokens[current_token_index]->type == COMPARATOR) {
         string op = tokens[current_token_index++]->value;
         right = parse_add_min();
-        Expression *new_node = new Expression(); 
-        new_node->left = node;
-        new_node->right = right;
-        new_node->op = op;
-        node = new_node;
+
+        if (right != nullptr) {
+            Expression *new_node = new Expression(); 
+            new_node->left = node;
+            new_node->right = right;
+            new_node->op = op;
+            node = new_node;
+        }
     }
     return node;
 }
@@ -52,15 +56,19 @@ Expression *Expression_Parser::parse_add_min(void)
     Expression *node = parse_mul_div();
     Expression *right = nullptr;
     
-
+    if (node == nullptr)
+        return nullptr;
     while (current_token_index < tokens.size() && tokens[current_token_index]->type == NOPRIO_OPERATOR) {
         string op = tokens[current_token_index++]->value;
         right = parse_mul_div();
-        Expression *new_node = new Expression(); 
-        new_node->left = node;
-        new_node->right = right;
-        new_node->op = op;
-        node = new_node;
+
+        if (right != nullptr) {
+            Expression *new_node = new Expression(); 
+            new_node->left = node;
+            new_node->right = right;
+            new_node->op = op;
+            node = new_node;
+        }
     }
     return node;
 }
@@ -70,20 +78,26 @@ Expression *Expression_Parser::parse_mul_div(void)
     Expression *node = parse_parentheses();
     Expression *right = nullptr;
     
+    if (node == nullptr)
+        return nullptr;
     while (current_token_index < tokens.size() && tokens[current_token_index]->type == PRIO_OPERATOR) {
         string op = tokens[current_token_index++]->value;
         right = parse_parentheses();
-        Expression *new_node = new Expression(); 
-        new_node->left = node;
-        new_node->right = right;
-        new_node->op = op;
-        node = new_node;
+        if (right != nullptr) {
+            Expression *new_node = new Expression(); 
+            new_node->left = node;
+            new_node->right = right;
+            new_node->op = op;
+            node = new_node;
+        }
     }
     return node;
 }
 
 Expression *Expression_Parser::parse_parentheses(void)
 {
+    if (current_token_index >= tokens.size())
+        return nullptr;
     if (tokens[current_token_index]->type != O_PARENTHESE)
         return (parse_value());
     vector<token *> private_tokens;
@@ -135,7 +149,7 @@ Expression *Expression_Parser::parse_value(void)
         return value_node;
 
     } else if (tokens[current_token_index]->type == IDENTIFIER) {
-
+        // FCALL
         if (current_token_index + 1 < tokens.size() && tokens[current_token_index + 1]->type == O_PARENTHESE) {
             FunctionCallNode *fcall_node = new FunctionCallNode();
 
@@ -165,7 +179,8 @@ Expression *Expression_Parser::parse_value(void)
                     ++current_token_index;
                 }
                 Expression *expression = create_expression(new_tokens);
-                fcall_node->args.push_back(expression);
+                if (expression != nullptr)
+                    fcall_node->args.push_back(expression);
                 new_tokens.clear();
 
                 if (current_token_index < tokens.size() && tokens[current_token_index]->type == COMMA){

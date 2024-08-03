@@ -52,8 +52,8 @@ variant_t Expression::evaluate(std::map<std::string, variant_t> variables, Visit
 {    
     if (!op.empty() && left && right) {
 
-        auto right_val = left->evaluate(variables, v);
-        auto left_val = right->evaluate(variables, v);
+        auto left_val = left->evaluate(variables, v);
+        auto right_val = right->evaluate(variables, v);
 
         variant_t res = std::visit([this](auto&& l, auto&& r) -> variant_t {
             using LType = std::decay_t<decltype(l)>;
@@ -100,7 +100,8 @@ variant_t FunctionCallNode::evaluate(std::map<std::string, variant_t> variables,
                     fcallnode->accept(functionNode, v);
                 return v->ret_value;
             } else {
-                throw std::runtime_error("Function: " + this->name + " has an incorrect number of arguments");
+                throw std::runtime_error("Function: " + this->name + "require " +
+                    std::to_string(functionNode->args.size()) + " arguments but " + std::to_string(this->args.size()) + " are given");
             }
         } else {
             throw std::runtime_error("Function: " + this->name + " is incorrect");

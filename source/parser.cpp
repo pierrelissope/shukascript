@@ -94,8 +94,10 @@ void AST::build(vector<token *> tokens)
                 // Check if the expression is not empty
                 if (exp_tokens.size() != 0) {
                     Expression *new_expression = create_expression(exp_tokens);
-                    Assignement *new_assignement = new Assignement(next_val_type, next_val_name, new_expression);
-                    nodes.push_back(new_assignement);
+                    if (new_expression != nullptr) {
+                        Assignement *new_assignement = new Assignement(next_val_type, next_val_name, new_expression);
+                        nodes.push_back(new_assignement);
+                    }
                 }
                 exp_tokens.clear();
             } else {
@@ -103,7 +105,9 @@ void AST::build(vector<token *> tokens)
                 vector<token *> exp_tokens = this->get_expression_tokens(tokens);
                 Expression *new_expression = create_expression(exp_tokens);
                 exp_tokens.clear();
-                nodes.push_back(new_expression);
+                if (new_expression != nullptr) {
+                    nodes.push_back(new_expression);
+                }
             }
         }
 
@@ -118,17 +122,19 @@ void AST::build(vector<token *> tokens)
             Expression *new_expression = nullptr;
             if (exp_tokens.size() != 0) {
                 new_expression = create_expression(exp_tokens);
-                // Check if There is a content inside the expression
-                if (tokens[current_token_index]->type == O_BRACKET) {
-                    vector<token *> struct_content_tokens = this->get_structure_tokens(tokens);
-                    Structure *new_structure = new Structure(next_struct_type, new_expression, struct_content_tokens);
-                    nodes.push_back(new_structure);
-                    struct_content_tokens.clear();
-                } else {
-                    delete new_expression;
-                    exp_tokens.clear();
-                    cerr << "Error: you must add content inside your structure";
-                    break;
+                if (new_expression != nullptr) {
+                    // Check if There is a content inside the expression
+                    if (tokens[current_token_index]->type == O_BRACKET) {
+                        vector<token *> struct_content_tokens = this->get_structure_tokens(tokens);
+                        Structure *new_structure = new Structure(next_struct_type, new_expression, struct_content_tokens);
+                        nodes.push_back(new_structure);
+                        struct_content_tokens.clear();
+                    } else {
+                        delete new_expression;
+                        exp_tokens.clear();
+                        cerr << "Error: you must add content inside your structure";
+                        break;
+                    }
                 }
             } else {
                 exp_tokens.clear();

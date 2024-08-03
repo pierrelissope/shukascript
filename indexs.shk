@@ -1,7 +1,11 @@
-function int addition(int a, int b)
+function variant retour(index)
 {
-    return(a + b);
+    if (index > 90) {
+        return("Geant");
+    }
+    if (index <= 90) {
+        return("minus");
+    }
 }
 
-v = addition(20, 2) + 10 + addition(20, 2) * 2;
-print(v);
+print(retour(1000));
