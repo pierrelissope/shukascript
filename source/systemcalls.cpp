@@ -2,6 +2,7 @@
 #include <random>
 #include <cstdlib>
 #include <ctime>
+#include <type_traits>
 
 #include "shkcalls.hpp"
 #include "ast.hpp"
@@ -71,12 +72,67 @@ void exitsyscall(std::vector<Expression *> args, AST *parent_node, Visitor *v)
     exit(0);
 }
 
+void input(std::vector<Expression *>, AST *, Visitor *v)
+{
+    std::string str;
+
+    std::cin >> str;
+    v->ret_value = str;
+}
+
+//luigiconvert(a, b);
+
+void luigi_to_int(std::vector<Expression *> args, AST *parent_node, Visitor *v) {
+    for (auto element : args) {
+        variant_t vvalue = element->evaluate(parent_node->variables, v);
+        if (std::holds_alternative<int>(vvalue)) {
+            std::cout << "Error 🤌 : expecting parameter of type 'string', but got 'int'" << std::endl;
+        } else if (std::holds_alternative<double>(vvalue)) {
+            std::cout << "Error 🤌 : expecting parameter of type 'string', but got 'double'" << std::endl;
+        } else if (std::holds_alternative<std::string>(vvalue)) {
+            int res = 0;
+            std::string str = std::get<std::string>(vvalue);
+
+            res = std::stoi(str);
+            v->ret_value = res;
+        } else {
+            std::cout << "Unrecognized value" << std::endl;
+        }
+    }
+}
+
+void luigi_to_string(std::vector<Expression *> args, AST *parent_node, Visitor *v) {
+    for (auto element : args) {
+        variant_t vvalue = element->evaluate(parent_node->variables, v);
+        if (std::holds_alternative<int>(vvalue)) {
+            std::string res = 0;
+            int nb_value = std::get<int>(vvalue);
+
+            res = std::to_string(nb_value);
+            v->ret_value = res;
+        } else if (std::holds_alternative<double>(vvalue)) {
+            std::string res = 0;
+            double nb_value = std::get<double>(vvalue);
+
+            res = std::to_string(nb_value);
+            v->ret_value = res;
+        } else if (std::holds_alternative<std::string>(vvalue)) {
+            std::cout << "Error 🤌 : expecting parameter of type 'int' or 'double', but got 'string'" << std::endl;
+        } else {
+            std::cout << "Unrecognized value" << std::endl;
+        }
+    }
+}
+
 int call_sysfunctions(std::string name, std::vector<Expression *> args, AST *parent_node, Visitor *v)
 {
     static const std::map<std::string, syscallo> sys_fct_map = {
         {"print", print},
         {"return", returnsyscall},
         {"random", randomsyscall},
+        {"luiginput", input},
+        {"luigint", luigi_to_int},
+        {"tiramistring", luigi_to_string},
         {"exit", exitsyscall},
     };
 
