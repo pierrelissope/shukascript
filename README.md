@@ -9,6 +9,8 @@ ShukaScript is a programming language designed to make learning programming both
 - **Basic Data Types**: Support for integers, floats, strings, and booleans.
 - **Control Structures**: Support for conditional statements (if) and loops (while).
 - **Custom Functions**: Define and call your own functions.
+- **Bulletins Functions**: Already integrated functions that you can use (random, return, print).
+- **Easy Types**: automatically managed types.. however for the functions return values you have choice between (int, string, float and variant(the best))
 
 ## Compilation
 
@@ -73,7 +75,7 @@ function variant main(choice)
         print("tour de boucle");
     }
     fonctionincroyable();
-    print("this is the end" + );
+    print("this is the end", " ", "hope u enjoyed");
     print("MADE BY SHUKABIAT");
 }
 
