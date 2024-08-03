@@ -26,7 +26,7 @@ LIBOBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(LIBSRC))
 SRC_TEST = 
 OBJ_TEST = $(patsubst $(TESTS_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_TEST))
 
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -std=c++17
 LDLIBS = -lm
 CPPFLAGS = -iquote ./$(INCLUDE_DIR)
 
