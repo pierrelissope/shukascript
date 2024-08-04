@@ -16,7 +16,7 @@ ShukaScript is a programming language designed to make learning programming both
 
 ### Requirements
 
-- Compile using a modern C++ compiler that supports C++11 standard or higher.
+- Compile using a modern C++ compiler that supports C++17 standard or higher.
 - Use CMake for managing the project build.
 
 ### Building the Project
