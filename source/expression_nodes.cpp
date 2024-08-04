@@ -4,8 +4,6 @@
 #include "ast.hpp"
 #include "visitor.hpp"
 
-// (expression + function()) * 2
-
 using namespace std;
 
 bool is_float(const std::string& str)
@@ -29,10 +27,10 @@ bool is_all_digits(const std::string& str)
     return true;
 }
 
-Expression *Expression_Parser::parse_cmp(void)
+shared_ptr<Expression> Expression_Parser::parse_cmp(void)
 {
-    Expression *node = parse_add_min();
-    Expression *right = nullptr;
+    shared_ptr<Expression> node = parse_add_min();
+    shared_ptr<Expression> right = nullptr;
     
     if (node == nullptr)
         return nullptr;
@@ -41,7 +39,7 @@ Expression *Expression_Parser::parse_cmp(void)
         right = parse_add_min();
 
         if (right != nullptr) {
-            Expression *new_node = new Expression(); 
+            shared_ptr<Expression> new_node = make_shared<Expression>(); 
             new_node->left = node;
             new_node->right = right;
             new_node->op = op;
@@ -51,10 +49,10 @@ Expression *Expression_Parser::parse_cmp(void)
     return node;
 }
 
-Expression *Expression_Parser::parse_add_min(void)
+shared_ptr<Expression> Expression_Parser::parse_add_min(void)
 {
-    Expression *node = parse_mul_div();
-    Expression *right = nullptr;
+    shared_ptr<Expression> node = parse_mul_div();
+    shared_ptr<Expression> right = nullptr;
     
     if (node == nullptr)
         return nullptr;
@@ -63,7 +61,7 @@ Expression *Expression_Parser::parse_add_min(void)
         right = parse_mul_div();
 
         if (right != nullptr) {
-            Expression *new_node = new Expression(); 
+            shared_ptr<Expression> new_node = make_shared<Expression>(); 
             new_node->left = node;
             new_node->right = right;
             new_node->op = op;
@@ -73,10 +71,10 @@ Expression *Expression_Parser::parse_add_min(void)
     return node;
 }
 
-Expression *Expression_Parser::parse_mul_div(void)
+shared_ptr<Expression> Expression_Parser::parse_mul_div(void)
 {
-    Expression *node = parse_parentheses();
-    Expression *right = nullptr;
+    shared_ptr<Expression> node = parse_parentheses();
+    shared_ptr<Expression> right = nullptr;
     
     if (node == nullptr)
         return nullptr;
@@ -84,7 +82,7 @@ Expression *Expression_Parser::parse_mul_div(void)
         string op = tokens[current_token_index++]->value;
         right = parse_parentheses();
         if (right != nullptr) {
-            Expression *new_node = new Expression(); 
+            shared_ptr<Expression> new_node = make_shared<Expression>(); 
             new_node->left = node;
             new_node->right = right;
             new_node->op = op;
@@ -94,13 +92,13 @@ Expression *Expression_Parser::parse_mul_div(void)
     return node;
 }
 
-Expression *Expression_Parser::parse_parentheses(void)
+shared_ptr<Expression> Expression_Parser::parse_parentheses(void)
 {
     if (current_token_index >= tokens.size())
         return nullptr;
     if (tokens[current_token_index]->type != O_PARENTHESE)
         return (parse_value());
-    vector<token *> private_tokens;
+    vector<shared_ptr<token>> private_tokens;
 
     int open_p = 0;
     ++current_token_index;
@@ -114,23 +112,23 @@ Expression *Expression_Parser::parse_parentheses(void)
         ++current_token_index;
     }
     
-    Expression *node = create_expression(private_tokens);
+    shared_ptr<Expression> node = create_expression(private_tokens);
     private_tokens.clear();
     return node;
 }
 
-Expression *Expression_Parser::parse_value(void)
+shared_ptr<Expression> Expression_Parser::parse_value(void)
 {
     if (is_all_digits(tokens[current_token_index]->value)) {
         // FULLNOMBRE
-        ValueNode *value_node = new ValueNode();
+        shared_ptr<ValueNode> value_node = make_shared<ValueNode> ();
         value_node->value = atoi(tokens[current_token_index++]->value.c_str());
         return value_node;
         
     } else if (is_float(tokens[current_token_index]->value)) {
         // FULLFLOAT
 
-        ValueNode *value_node = new ValueNode();
+        shared_ptr<ValueNode> value_node = make_shared<ValueNode> ();
         value_node->value = atof(tokens[current_token_index++]->value.c_str());
         return value_node;
 
@@ -138,7 +136,7 @@ Expression *Expression_Parser::parse_value(void)
         // FULLSTRING
 
         ++current_token_index;
-        ValueNode *value_node = new ValueNode();
+        shared_ptr<ValueNode> value_node = make_shared<ValueNode> ();
         string content = "";
 
         while (current_token_index < tokens.size() && tokens[current_token_index]->type == IDENTIFIER)
@@ -151,14 +149,14 @@ Expression *Expression_Parser::parse_value(void)
     } else if (tokens[current_token_index]->type == IDENTIFIER) {
         // FCALL
         if (current_token_index + 1 < tokens.size() && tokens[current_token_index + 1]->type == O_PARENTHESE) {
-            FunctionCallNode *fcall_node = new FunctionCallNode();
+            shared_ptr<FunctionCallNode> fcall_node = make_shared<FunctionCallNode>();
 
             fcall_node->name = tokens[current_token_index]->value;
             current_token_index += 2;
             int o_count = 1;
             while (current_token_index < tokens.size() && o_count != 0) {
                 
-                vector<token *> new_tokens;
+                vector<shared_ptr<token>> new_tokens;
                 while (current_token_index < tokens.size() &&
                    (tokens[current_token_index]->type == IDENTIFIER ||
                     tokens[current_token_index]->type == STRING_DELIMITER ||
@@ -179,7 +177,7 @@ Expression *Expression_Parser::parse_value(void)
                     new_tokens.push_back(tokens[current_token_index]);
                     ++current_token_index;
                 }
-                Expression *expression = create_expression(new_tokens);
+                shared_ptr<Expression> expression = create_expression(new_tokens);
                 if (expression != nullptr)
                     fcall_node->args.push_back(expression);
                 new_tokens.clear();
@@ -191,7 +189,7 @@ Expression *Expression_Parser::parse_value(void)
             ++current_token_index;
             return fcall_node;
         } else {
-            VariableNode *variable_node = new VariableNode();
+            shared_ptr<VariableNode> variable_node = make_shared<VariableNode>();
 
             variable_node->name = tokens[current_token_index++]->value;
             return variable_node;

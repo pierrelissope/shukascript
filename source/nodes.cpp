@@ -1,14 +1,14 @@
 #include "ast.hpp"
 #include "visitor.hpp"
 
-Assignement::Assignement(std::string var_type, std::string var_name, Expression *expression)
+Assignement::Assignement(std::string var_type, std::string var_name, std::shared_ptr<Expression> expression)
 {
     this->var_type = var_type;
     this->var_name = var_name;
     this->expression = expression;
 }
 
-Structure::Structure(std::string struct_type, Expression *expression, std::vector<token *>tokens)
+Structure::Structure(std::string struct_type, std::shared_ptr<Expression> expression, std::vector<std::shared_ptr<token>>tokens)
 {
     this->type = struct_type;
     this->expression = expression;
@@ -16,7 +16,7 @@ Structure::Structure(std::string struct_type, Expression *expression, std::vecto
     this->build(tokens);
 }
 
-Function::Function(std::vector<token *>tokens, std::string return_type, std::string name, std::vector<std::string> args, std::vector<std::string> args_types) {
+Function::Function(std::vector<std::shared_ptr<token>>tokens, std::string return_type, std::string name, std::vector<std::string> args, std::vector<std::string> args_types) {
 
     this->name = name;
     this->tokens = tokens;
@@ -26,33 +26,41 @@ Function::Function(std::vector<token *>tokens, std::string return_type, std::str
     this->build(tokens);
 }
 
-void ValueNode::accept(AST *parent_node, Visitor *v) {
-    v->visit_value(parent_node, this);
+void ValueNode::accept(std::shared_ptr<AST> parent_node, std::shared_ptr<Visitor> v) {
+
+    std::shared_ptr<ValueNode> self = std::dynamic_pointer_cast<ValueNode>(shared_from_this());
+    v->visit_value(parent_node, self);
 }
 
-void VariableNode::accept(AST *parent_node, Visitor *v) {
-    v->visit_variable(parent_node, this);
+void VariableNode::accept(std::shared_ptr<AST> parent_node, std::shared_ptr<Visitor> v) {
+    std::shared_ptr<VariableNode> self = std::dynamic_pointer_cast<VariableNode>(shared_from_this());
+    v->visit_variable(parent_node, self);
 }
 
-void FunctionCallNode::accept(AST *parent_node, Visitor *v) {
-    v->visit_fcall(parent_node, this);
+void FunctionCallNode::accept(std::shared_ptr<AST> parent_node, std::shared_ptr<Visitor> v) {
+    std::shared_ptr<FunctionCallNode> self = std::dynamic_pointer_cast<FunctionCallNode>(shared_from_this());
+    v->visit_fcall(parent_node, self);
 }
 
 
 
 
-void Assignement::accept(AST *parent_node, Visitor *v) {
-    v->visit_assignement(parent_node, this);
+void Assignement::accept(std::shared_ptr<AST> parent_node, std::shared_ptr<Visitor> v) {
+    std::shared_ptr<Assignement> self = std::dynamic_pointer_cast<Assignement>(shared_from_this());
+    v->visit_assignement(parent_node, self);
 }
 
-void Expression::accept(AST *parent_node, Visitor *v) {
-    v->visit_expression(parent_node, this);
+void Expression::accept(std::shared_ptr<AST> parent_node, std::shared_ptr<Visitor> v) {
+    std::shared_ptr<Expression> self = std::dynamic_pointer_cast<Expression>(shared_from_this());
+    v->visit_expression(parent_node, self);
 }
 
-void Structure::accept(AST *parent_node, Visitor *v) {
-    v->visit_structure(parent_node, this);
+void Structure::accept(std::shared_ptr<AST> parent_node, std::shared_ptr<Visitor> v) {
+    std::shared_ptr<Structure> self = std::dynamic_pointer_cast<Structure>(shared_from_this());
+    v->visit_structure(parent_node, self);
 }
 
-void Function::accept(AST *parent_node, Visitor *v) {
-    v->visit_function(parent_node, this);
+void Function::accept(std::shared_ptr<AST> parent_node, std::shared_ptr<Visitor> v) {
+    std::shared_ptr<Function> self = std::dynamic_pointer_cast<Function>(shared_from_this());
+    v->visit_function(parent_node, self);
 }
