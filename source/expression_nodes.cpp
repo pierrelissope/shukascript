@@ -21,7 +21,7 @@ bool is_all_digits(const std::string& str)
     if (str.empty()) return false;
     
     for (char c : str) {
-        if (!std::isdigit(static_cast<unsigned char>(c)))
+        if (!std::isdigit(static_cast<unsigned char>(c)) && c != '-')
             return false;
     }
     return true;
@@ -119,17 +119,29 @@ shared_ptr<Expression> Expression_Parser::parse_parentheses(void)
 
 shared_ptr<Expression> Expression_Parser::parse_value(void)
 {
+
+    int8_t multiplier = 1;
+
+    while (current_token_index < tokens.size() &&
+           tokens[current_token_index]->value == "-") {
+        multiplier *= -1;
+        ++current_token_index;
+    }
+    if (current_token_index >= tokens.size())
+        return nullptr;
+
     if (is_all_digits(tokens[current_token_index]->value)) {
         // FULLNOMBRE
+
         shared_ptr<ValueNode> value_node = make_shared<ValueNode> ();
-        value_node->value = atoi(tokens[current_token_index++]->value.c_str());
+        value_node->value = multiplier * std::stoi(tokens[current_token_index++]->value);
         return value_node;
         
     } else if (is_float(tokens[current_token_index]->value)) {
         // FULLFLOAT
 
         shared_ptr<ValueNode> value_node = make_shared<ValueNode> ();
-        value_node->value = atof(tokens[current_token_index++]->value.c_str());
+        value_node->value = multiplier * atof(tokens[current_token_index++]->value.c_str());
         return value_node;
 
     } else if (tokens[current_token_index]->type == STRING_DELIMITER) {
@@ -144,6 +156,15 @@ shared_ptr<Expression> Expression_Parser::parse_value(void)
         value_node->value = content;
         if (current_token_index < tokens.size() && tokens[current_token_index]->type == STRING_DELIMITER)
             ++current_token_index;
+        if (multiplier == -1) {
+            shared_ptr<Expression> new_exp = make_shared<Expression>();
+            new_exp->left = value_node;
+            shared_ptr<ValueNode> minus_one = make_shared<ValueNode>();
+            minus_one->value = -1;
+            new_exp->right = minus_one;
+            new_exp->op = "*";
+            return new_exp;
+        }
         return value_node;
 
     } else if (tokens[current_token_index]->type == IDENTIFIER) {
@@ -187,11 +208,31 @@ shared_ptr<Expression> Expression_Parser::parse_value(void)
                 }
             }
             ++current_token_index;
+            if (multiplier == -1) {
+                shared_ptr<Expression> new_exp = make_shared<Expression>();
+                new_exp->left = fcall_node;
+                shared_ptr<ValueNode> minus_one = make_shared<ValueNode>();
+                minus_one->value = -1;
+                new_exp->right = minus_one;
+                new_exp->op = "*";
+                return new_exp;
+            }
             return fcall_node;
         } else {
             shared_ptr<VariableNode> variable_node = make_shared<VariableNode>();
 
             variable_node->name = tokens[current_token_index++]->value;
+
+            if (multiplier == -1) {
+                shared_ptr<Expression> new_exp = make_shared<Expression>();
+                new_exp->left = variable_node;
+                shared_ptr<ValueNode> minus_one = make_shared<ValueNode>();
+                minus_one->value = -1;
+                new_exp->right = minus_one;
+                new_exp->op = "*";
+                return new_exp;
+            }
+
             return variable_node;
         }
     } else {
